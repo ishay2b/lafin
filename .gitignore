@@ -1,0 +1,4 @@
+checkpoints/
+celeba-hq_models/
+**/__pycache__/
+.vscode/

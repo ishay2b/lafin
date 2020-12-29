@@ -26,6 +26,8 @@ class Lafin():
             model_name = 'inpaint'
         elif config.MODEL == 3:
             model_name = 'landmark_inpaint'
+        else:
+            model_name = 'landmark_inpaint'
 
         self.debug = False
         self.model_name = model_name

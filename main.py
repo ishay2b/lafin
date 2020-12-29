@@ -8,64 +8,6 @@ from shutil import copyfile
 from src.config import Config
 from src.lafin import Lafin
 
-
-def main(mode=None):
-    r"""starts the model
-
-    Args:
-        mode (int): 1: train, 2: test, 3: eval, reads from config file if not specified
-    """
-
-    config = load_config(mode)
-
-
-    # cuda visble devices
-    os.environ['CUDA_VISIBLE_DEVICES'] = ','.join(str(e) for e in config.GPU)
-
-
-    # init device
-    if torch.cuda.is_available():
-        config.DEVICE = torch.device("cuda")
-        torch.backends.cudnn.benchmark = True   # cudnn auto-tuner
-    else:
-        config.DEVICE = torch.device("cpu")
-
-
-
-    # set cv2 running threads to 1 (prevents deadlocks with pytorch dataloader)
-    cv2.setNumThreads(0)
-
-
-    # initialize random seed
-    torch.manual_seed(config.SEED)
-    torch.cuda.manual_seed_all(config.SEED)
-    np.random.seed(config.SEED)
-    random.seed(config.SEED)
-
-
-
-    # build the model and initialize
-    model = Lafin(config)
-    model.load()
-
-
-    # model training
-    if config.MODE == 1:
-        config.print()
-        print('\nstart training...\n')
-        model.train()
-
-    # model test
-    elif config.MODE == 2:
-        print('\nstart testing...\n')
-        model.test()
-
-    # eval mode
-    else:
-        print('\nstart eval...\n')
-        model.eval()
-
-
 def load_config(mode=None):
     r"""loads model config
 
@@ -74,15 +16,14 @@ def load_config(mode=None):
     """
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--path', '--checkpoints', type=str, default='./checkpoints', help='model checkpoints path (default: ./checkpoints)')
-    parser.add_argument('--model', type=int, choices=[1, 2, 3], help='1: landmark prediction model, 2: inpaint model, 3: joint model')
+    parser.add_argument('--path', '--checkpoints', type=str, default='./celeba-hq_models', help='model checkpoints path (default: ./checkpoints)')
+    parser.add_argument('--model', default=3, type=int, choices=[1, 2, 3], help='1: landmark prediction model, 2: inpaint model, 3: joint model')
 
     # test mode
-    if mode == 2:
-        parser.add_argument('--input', type=str, help='path to the input images directory or an input image')
-        parser.add_argument('--mask', type=str, help='path to the masks directory or a mask file')
-        parser.add_argument('--landmark', type=str, help='path to the landmarks directory or a landmark file')
-        parser.add_argument('--output', type=str, help='path to the output directory')
+    parser.add_argument('--input', default='examples/images/195579.jpg', type=str, help='path to the input images directory or an input image')
+    parser.add_argument('--mask', default='examples/masks/11265.png', type=str, help='path to the masks directory or a mask file')
+    parser.add_argument('--landmark', type=str, help='path to the landmarks directory or a landmark file')
+    parser.add_argument('--output', default='./celeba-hq_models/output/', type=str, help='path to the output directory')
 
     args = parser.parse_args()
     config_path = os.path.join(args.path, 'config.yml')
@@ -130,4 +71,61 @@ def load_config(mode=None):
 
 
 if __name__ == "__main__":
-    main()
+    mode=None
+    r"""starts the model
+
+    Args:
+        mode (int): 1: train, 2: test, 3: eval, reads from config file if not specified
+    """
+
+    config = load_config(mode=2)
+
+
+    # cuda visble devices
+    #os.environ['CUDA_VISIBLE_DEVICES'] = '' #','.join(str(e) for e in config.GPU)
+
+
+    # init device
+    if torch.cuda.is_available():
+        config.DEVICE = torch.device("cuda")
+        torch.backends.cudnn.benchmark = True   # cudnn auto-tuner
+    else:
+        config.DEVICE = torch.device("cpu")
+
+
+
+    # set cv2 running threads to 1 (prevents deadlocks with pytorch dataloader)
+    cv2.setNumThreads(0)
+
+
+    # initialize random seed
+    torch.manual_seed(config.SEED)
+    torch.cuda.manual_seed_all(config.SEED)
+    np.random.seed(config.SEED)
+    random.seed(config.SEED)
+
+
+
+    # build the model and initialize
+    model = Lafin(config)
+    model.load()
+
+    
+    os.environ['CUDA_VISIBLE_DEVICES'] = ''
+
+    # model training
+    if config.MODE == 1:
+        config.print()
+        print('\nstart training...\n')
+        model.train()
+
+    # model test
+    elif config.MODE == 2:
+        print('\nstart testing...\n')
+        model.test()
+
+    # eval mode
+    else:
+        print('\nstart eval...\n')
+        model.eval()
+

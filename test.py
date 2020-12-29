@@ -1,2 +1,1 @@
-from main import main
-main(mode=2)
+from pytorch2keras import pytorch_to_keras
