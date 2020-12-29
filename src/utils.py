@@ -5,7 +5,6 @@ import sys
 import time
 import random
 import numpy as np
-import matplotlib.pyplot as plt
 from PIL import Image
 
 
@@ -43,6 +42,7 @@ def stitch_images(inputs, *outputs, img_per_row=2):
 
 
 def imshow(img, title=''):
+    import matplotlib.pyplot as plt
     fig = plt.gcf()
     fig.canvas.set_window_title(title)
     plt.axis('off')
