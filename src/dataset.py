@@ -7,9 +7,9 @@ import numpy as np
 import torchvision.transforms.functional as F
 from torch.utils.data import DataLoader
 from PIL import Image
-from imageio import imread
+from scipy.misc import imread
 from skimage.color import rgb2gray
-from cv2 import resize as imresize
+from scipy.misc import imresize
 from .utils import create_mask
 
 
@@ -84,8 +84,8 @@ class Dataset(torch.utils.data.Dataset):
                 mask2 = mask2[:,::-1,...]
 
         if self.augment and self.config.MODEL == 1 and np.random.uniform(0,1)<=0.2:
-            img = imresize(img,(int(self.config.INPUT_SIZE*3/8),int(self.config.INPUT_SIZE*3/8)))
-            img = imresize(img,(self.config.INPUT_SIZE, self.config.INPUT_SIZE))
+            img = imresize(img,[int(self.config.INPUT_SIZE*3/8),int(self.config.INPUT_SIZE*3/8)])
+            img = imresize(img,[self.config.INPUT_SIZE, self.config.INPUT_SIZE])
 
         if self.augment and self.config.MODEL == 1:
             for i in range(3):
@@ -175,7 +175,7 @@ class Dataset(torch.utils.data.Dataset):
             i = (imgw - side) // 2
             img = img[j:j + side, i:i + side, ...]
 
-        img = imresize(img, (int(height), int(width)))
+        img = scipy.misc.imresize(img, [height, width])
 
         return img
 
