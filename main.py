@@ -74,15 +74,15 @@ def load_config(mode=None):
     """
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--path', '--checkpoints', type=str, default='./checkpoints', help='model checkpoints path (default: ./checkpoints)')
-    parser.add_argument('--model', type=int, choices=[1, 2, 3], help='1: landmark prediction model, 2: inpaint model, 3: joint model')
+    parser.add_argument('--path', '--checkpoints', type=str, default='./celeba-hq_models', help='model checkpoints path (default: ./checkpoints)')
+    parser.add_argument('--model', default=3, type=int, choices=[1, 2, 3], help='1: landmark prediction model, 2: inpaint model, 3: joint model')
 
-    # test mode
     if mode == 2:
-        parser.add_argument('--input', type=str, help='path to the input images directory or an input image')
-        parser.add_argument('--mask', type=str, help='path to the masks directory or a mask file')
+        # test mode
+        parser.add_argument('--input', default='examples/images/195579.jpg', type=str, help='path to the input images directory or an input image')
+        parser.add_argument('--mask', default='examples/masks/11265.png', type=str, help='path to the masks directory or a mask file')
         parser.add_argument('--landmark', type=str, help='path to the landmarks directory or a landmark file')
-        parser.add_argument('--output', type=str, help='path to the output directory')
+        parser.add_argument('--output', default='./celeba-hq_models/output/', type=str, help='path to the output directory')
 
     args = parser.parse_args()
     config_path = os.path.join(args.path, 'config.yml')
@@ -130,4 +130,4 @@ def load_config(mode=None):
 
 
 if __name__ == "__main__":
-    main()
+    main(mode=2)
